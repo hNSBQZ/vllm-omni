@@ -6,7 +6,7 @@ import soundfile as sf
 def main():
     from vllm_omni.entrypoints.omni import Omni
 
-    MODEL = "/cache/caitianchi/model/MiniCPM-o-4_5"
+    MODEL = "/cache/hanqingzhe/o45-pure-py"
     STAGE_CFG = "vllm_omni/model_executor/stage_configs/minicpmo45_8x4090.yaml"
     TTS_SUFFIX = "<|spk_bos|><|spk|><|spk_eos|><|tts_bos|>"
 
@@ -24,7 +24,7 @@ def main():
             if hasattr(aud, "numpy"):
                 aud = aud.numpy()
             if isinstance(aud, np.ndarray) and aud.size > 100:
-                path = "/cache/caitianchi/code/o45/test/offline_tts_45_北京.wav"
+                path = "/cache/hanqingzhe/vllm-omni/offline_tts_45_北京.wav"
                 sf.write(path, aud, 24000)
                 dur = aud.size / 24000
                 print(f"AUDIO SAVED: {path} ({aud.size} samples, {dur:.1f}s)")

@@ -5,7 +5,7 @@ import torch
 def main():
     from vllm_omni.entrypoints.omni import Omni
 
-    MODEL = "/cache/caitianchi/model/MiniCPM-o-4_5"
+    MODEL = "/cache/hanqingzhe/o45-pure-py"
     STAGE_CFG = "vllm_omni/model_executor/stage_configs/minicpmo45_8x4090.yaml"
     TTS_SUFFIX = "<|spk_bos|><|spk|><|spk_eos|><|tts_bos|>"
 
