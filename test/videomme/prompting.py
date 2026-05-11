@@ -7,6 +7,7 @@ from dataset import VideoMMEExample
 
 
 VIDEO_PLACEHOLDER = "(<video>./</video>)"
+NO_THINKING_SUFFIX = "<think>\n\n</think>\n\n"
 
 
 DEFAULT_USER_PROMPT_TEMPLATE = (
@@ -26,17 +27,13 @@ def build_question_prompt(example: VideoMMEExample) -> str:
 
 
 def build_chat_prompt(question_prompt: str) -> str:
-    """Wrap the video placeholder and question in MiniCPM-o chat tokens.
-
-    TODO: verify this exact offline prompt form with a one-sample MiniCPM-o 4.5
-    run. If `Omni.generate` expects pre-rendered chat tokens from the tokenizer,
-    replace this string builder with tokenizer.apply_chat_template.
-    """
+    """Wrap the video placeholder and question in MiniCPM-o chat tokens."""
     return (
         "<|im_start|>user\n"
         f"{VIDEO_PLACEHOLDER}\n"
         f"{question_prompt}<|im_end|>\n"
         "<|im_start|>assistant\n"
+        f"{NO_THINKING_SUFFIX}"
     )
 
 
@@ -47,10 +44,9 @@ def build_omni_prompt(
 ) -> dict[str, object]:
     """Return the prompt dict expected by `Omni.generate`.
 
-    The public vLLM multimodal key is singular `video`. MiniCPM-o's processor
-    then expands the `<video>./</video>` placeholder into one no-slice image
-    placeholder per frame, which keeps the effective input aligned with CPP's
-    frame-by-frame image prefill path.
+    HF `model.chat` appends the empty thinking block when
+    `enable_thinking=False`. The MiniCPM-o 4.5 vLLM processor expands the video
+    placeholder into per-frame image placeholders with newline separators.
     """
     question_prompt = build_question_prompt(example)
     return {

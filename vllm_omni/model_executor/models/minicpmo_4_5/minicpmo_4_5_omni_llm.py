@@ -3359,15 +3359,13 @@ class MiniCPMO45OmniLLMMultiModalProcessor(BaseMultiModalProcessor[MiniCPMO45Omn
         )
 
     def get_video_prompt_texts(self, image_size: ImageSize, num_frames: int) -> str:
-        return (
-            self.info.get_slice_image_placeholder(
-                image_size=image_size,
-                image_idx=0,
-                max_slice_nums=self.info.get_video_max_slice_num(),
-                use_image_id=False,
-            )
-            * num_frames
+        frame_placeholder = self.info.get_slice_image_placeholder(
+            image_size=image_size,
+            image_idx=0,
+            max_slice_nums=self.info.get_video_max_slice_num(),
+            use_image_id=False,
         )
+        return "\n".join([frame_placeholder] * num_frames)
     
     def get_audio_prompt_texts(
         self,
