@@ -3352,10 +3352,18 @@ class MiniCPMO45OmniLLMMultiModalProcessor(BaseMultiModalProcessor[MiniCPMO45Omn
     ) -> bool:
         return False
 
-    def get_image_prompt_texts(self, image_size: ImageSize, image_idx: int = 0) -> str:
+    def get_image_prompt_texts(
+        self,
+        image_size: ImageSize,
+        image_idx: int = 0,
+        max_slice_nums: int | None = None,
+        use_image_id: bool | None = None,
+    ) -> str:
         return self.info.get_slice_image_placeholder(
             image_size,
             image_idx=image_idx,
+            max_slice_nums=max_slice_nums,
+            use_image_id=use_image_id,
         )
 
     def get_video_prompt_texts(self, image_size: ImageSize, num_frames: int) -> str:
@@ -3553,9 +3561,24 @@ class MiniCPMO45OmniLLMMultiModalProcessor(BaseMultiModalProcessor[MiniCPMO45Omn
             )
 
             image_size = images.get_image_size(item_idx)
+            max_slice_nums = hf_processor_mm_kwargs.get("max_slice_nums")
+            use_image_id = hf_processor_mm_kwargs.get("use_image_id")
 
             return PromptUpdateDetails.select_text(
-                self.get_image_prompt_texts(image_size, item_idx),
+                self.get_image_prompt_texts(
+                    image_size,
+                    item_idx,
+                    max_slice_nums=(
+                        int(max_slice_nums)
+                        if max_slice_nums is not None
+                        else None
+                    ),
+                    use_image_id=(
+                        bool(use_image_id)
+                        if use_image_id is not None
+                        else None
+                    ),
+                ),
                 "<unk>",
             )
 
